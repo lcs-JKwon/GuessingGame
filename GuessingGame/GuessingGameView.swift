@@ -53,6 +53,10 @@ struct GuessingGameView: View {
     // Becomes true when the player finds the secret number or runs out of guesses.
     @State var gameIsOver: Bool = false
 
+    // The fewest guesses the player has ever needed to win. 0 means no win yet.
+    // Like gamesWon, a new game does not reset this.
+    @State var bestScore: Int = 0
+
     // MARK: - Computed properties
 
     var body: some View {
@@ -133,6 +137,11 @@ struct GuessingGameView: View {
             Text("Guesses: \(guessCount) of \(maximumGuesses)    Games won: \(gamesWon)")
                 .font(.headline)
                 .foregroundStyle(Color.secondary)
+
+            // The best score only means something once there has been a win.
+            Text("Best: \(bestScoreText())")
+                .font(.headline)
+                .foregroundStyle(Color.secondary)
         }
         .padding(32)
         .font(.title2)
@@ -152,18 +161,27 @@ struct GuessingGameView: View {
         // One more guess has been made.
         guessCount += 1
 
+        // How far the guess is from the secret number, as a positive number.
+        // It is worked out once per guess and never changes after, so it is a constant.
+        let distance: Int = distanceBetween(guess, and: secretNumber)
+
         if guess == secretNumber {
             message = "Yes, \(playerName)! \(secretNumber) is my number."
             messageSymbol = "star.circle.fill"
             messageColor = Color.green
             gamesWon += 1
             gameIsOver = true
+
+            // A new best score is the first win, or a win in fewer guesses than before.
+            if bestScore == 0 || guessCount < bestScore {
+                bestScore = guessCount
+            }
         } else if guess < secretNumber {
-            message = "\(guess) is too low. Go higher."
+            message = "\(guess) is too low. Go higher. \(temperatureHint(distance: distance))"
             messageSymbol = "arrow.up.circle.fill"
             messageColor = Color.blue
         } else {
-            message = "\(guess) is too high. Go lower."
+            message = "\(guess) is too high. Go lower. \(temperatureHint(distance: distance))"
             messageSymbol = "arrow.down.circle.fill"
             messageColor = Color.red
         }
@@ -174,6 +192,37 @@ struct GuessingGameView: View {
             messageSymbol = "xmark.octagon.fill"
             messageColor = Color.gray
             gameIsOver = true
+        }
+    }
+
+    // Hands back how far apart two numbers are, always as a positive number.
+    func distanceBetween(_ firstNumber: Int, and secondNumber: Int) -> Int {
+        if firstNumber > secondNumber {
+            return firstNumber - secondNumber
+        } else {
+            return secondNumber - firstNumber
+        }
+    }
+
+    // Hands back a one-word hint based on how far the guess is from the secret number.
+    // Hot is checked first on purpose: a distance of 3 is also within 15,
+    // and Swift stops at the first condition that is true.
+    func temperatureHint(distance: Int) -> String {
+        if distance <= 5 {
+            return "Hot!"
+        } else if distance <= 15 {
+            return "Warm."
+        } else {
+            return "Cold."
+        }
+    }
+
+    // Hands back the best score as text, or a dash when there is no win yet.
+    func bestScoreText() -> String {
+        if bestScore == 0 {
+            return "—"
+        } else {
+            return "\(bestScore) guesses"
         }
     }
 
