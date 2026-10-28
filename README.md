@@ -20,20 +20,18 @@ The app thinks of a whole number from 1 to 100. You have seven guesses to find i
 
 ## How it works
 
-<!-- TODO (you, in your own words — the rubric says so and the teacher may ask you to explain it live).
-Pick ONE idea. Suggested: the even-or-odd hint, because it touches every tool.
-Facts to use:
-  constants: hintCost: Int = 1 (top of file) — a constant because the price never changes while the app runs.
-  variable:  @State var hintUsed: Bool = false — a variable because it flips to true when bought and back to false in startNewGame().
-  decision:  evenOrOdd(_ number: Int) -> String uses number % 2 == 0 — remainder 0 means even — with if / else.
-  decision:  canBuyHint() -> Bool returns !hintUsed && guessesLeft() > hintCost — NOT and AND in one line instead of two nested ifs.
-  screen:    .disabled(!canBuyHint()) on the Hint button; buyEvenOddHint() changes message, messageSymbol, messageColor and guessCount.
-  why a function for canBuyHint: the rule lives in one named place; the button just asks the question.
-Write 6–8 sentences. Delete this comment when done. -->
+Idea: Even or odd hint. 
+- Player sees the Hint button besides the Guess button.
+Clicking the hint button will cost a guess, and the hint will tell if whether the number is even or odd. The hint button is usable only once, and will be grey and uninteractable after the first use 
+- For the constant, hintcost: Int = 1 is a constant. This is let: because the hint price never changes.
+-  For the variable, @state var hintUsed: Bool = false is a variable. This is var: because it flips to true when it is bought, and it goes back to false when a new game is started. @State is also here because the button greys out and becomes uninteractable once the hint is used. 
+- What I decided: hint button is enabled by .disabled(!canBuyHint()), and canBuyHint() returns !hintUsed && guessesLetf() > hintCost so paying would still leave a guess. With the same logic, > should not be >= as one guess left 1 > 1 is false, so that the last guess is not spended on the hint.
+- Tool choice: instead of two ifs I fixed the code to && and ! in one line as it reads in one sentence instead of two checks in different places.
+- Operator: secretNumber % 2 == 0 inside evenOrOdd(\_:). This way, there are only 2 possibilities; 1 as a remainder and not having a remainder. This is to identify if the number is even or odd. 
 
 ## Design choice
 
-The hint is never offered when only one guess is left. Spending the last guess on "it's even" would end the game without the player ever guessing, which feels like a trap rather than a hint. So `canBuyHint()` requires `guessesLeft() > hintCost`, not `>=`. The same function also handles "already bought", so the button has one question to ask instead of two.
+The hint is never offered when only one guess is left. Spending the last guess on "it's even" would end the game without the player ever guessing, So `canBuyHint()` requires `guessesLeft() > hintCost`, not `>=`. The same function also handles "already bought", so the button has one question to ask instead of two.
 
 ## Testing
 
