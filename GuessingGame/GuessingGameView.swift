@@ -7,7 +7,9 @@
 //  You choose a guess with the buttons and click Guess.
 //  The app tells you if your guess is too low, too high, or right,
 //  and how close you are: hot, warm or cold, each with its own symbol and colour.
-//  It counts your guesses and ends the game after seven misses.
+//  It counts the guesses you have left, turns that counter red when two or fewer
+//  remain, and ends the game after seven misses. The guess buttons grey out
+//  when they would push the guess outside 1 to 100.
 //  When you find the number, you can play again. The fewest guesses you have
 //  ever needed is kept as your best score, and the game says so when you beat it.
 //
@@ -29,6 +31,9 @@ let maximumGuesses: Int = 7
 // Named here so the same numbers are not typed again in each function that needs them.
 let hotDistance: Int = 5
 let warmDistance: Int = 15
+
+// When this many guesses or fewer are left, the counter turns red.
+let lowGuessesWarning: Int = 2
 
 // The game itself: what it remembers, what it shows on the screen,
 // and what it does when you click a button.
@@ -88,6 +93,8 @@ struct GuessingGameView: View {
                 Image(systemName: messageSymbol)
                     .font(.system(size: 60))
                     .foregroundStyle(messageColor)
+                    // The symbol bounces every time the guess count changes.
+                    .symbolEffect(.bounce, value: guessCount)
                 Text(message)
                     .font(.title2)
                     .multilineTextAlignment(.center)
@@ -105,20 +112,25 @@ struct GuessingGameView: View {
                 .monospacedDigit()
 
             // Four buttons to change the guess.
-            // Each one calls the same function with a different amount.
+            // Each one calls the same function with a different amount, and each one
+            // greys out when it would take the guess outside the range.
             HStack(spacing: 8) {
                 Button("-10") {
                     changeGuess(by: -10)
                 }
+                .disabled(guess - 10 < lowestNumber)
                 Button("-1") {
                     changeGuess(by: -1)
                 }
+                .disabled(guess - 1 < lowestNumber)
                 Button("+1") {
                     changeGuess(by: 1)
                 }
+                .disabled(guess + 1 > highestNumber)
                 Button("+10") {
                     changeGuess(by: 10)
                 }
+                .disabled(guess + 10 > highestNumber)
             }
             .buttonStyle(.bordered)
             .font(.title3)
@@ -141,9 +153,10 @@ struct GuessingGameView: View {
                 .buttonStyle(.borderedProminent)
             }
 
-            Text("Guesses: \(guessCount) of \(maximumGuesses)    Games won: \(gamesWon)")
+            // The counter turns red when the player is running low on guesses.
+            Text("Guesses left: \(guessesLeft())    Games won: \(gamesWon)")
                 .font(.headline)
-                .foregroundStyle(Color.secondary)
+                .foregroundStyle(guessCounterColor())
 
             // The best score only means something once there has been a win.
             Text("Best: \(bestScoreText())")
@@ -254,6 +267,20 @@ struct GuessingGameView: View {
             return Color.yellow
         } else {
             return Color.cyan
+        }
+    }
+
+    // Hands back how many guesses remain before the game is over.
+    func guessesLeft() -> Int {
+        return maximumGuesses - guessCount
+    }
+
+    // Red when the player is running low, otherwise the quiet grey the counters use.
+    func guessCounterColor() -> Color {
+        if guessesLeft() <= lowGuessesWarning {
+            return Color.red
+        } else {
+            return Color.secondary
         }
     }
 
