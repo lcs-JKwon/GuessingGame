@@ -39,30 +39,32 @@ The hint is never offered when only one guess is left. Spending the last guess o
 
 The secret number was fixed at **42** while testing (`// FOR TESTING ONLY`), then the random line was put back. The guess starts at 50 in every new game.
 
+All 22 tests were run on 2026-10-28 and every one matched.
+
 | Test | Chosen input | Should happen | Did happen |
 |---|---|---|---|
-| Hot, high side | guess 45 | "45 is too high. Go lower. Hot!" — flame symbol, orange card | |
-| Hot, exactly 5 away (edge) | guess 47 | "Hot!" — distance 5 still counts as hot | |
-| Warm begins (other side of the edge) | guess 48 | "Warm." — distance 6, sun symbol, yellow card | |
-| Warm, exactly 15 away (edge) | guess 57 | "Warm." — distance 15 is the last warm value | |
-| Cold begins (other side of the edge) | guess 58 | "Cold." — distance 16, snowflake symbol, cyan card | |
-| Hot, low side | guess 40 | "40 is too low. Go higher. Hot!" — flame symbol | |
-| First win | new game, win in 3 guesses | "Yes, friend! 42 is my number." with no "New record!" · Best: 3 guesses | |
-| Slower win keeps record | then win in 5 guesses | no "New record!" · Best still 3 guesses | |
-| Faster win beats record | then win in 2 guesses | message ends "New record!" · Best: 2 guesses | |
-| Counter still grey | 4 wrong guesses | "Guesses left: 3" in grey | |
-| Counter turns red (edge) | 5th wrong guess | "Guesses left: 2" in red | |
-| Out of guesses | 7 wrong guesses | "Out of guesses! My number was 42." · Play Again appears · guess buttons greyed | |
-| +10 greys out | set guess to 95 | +10 greyed, +1 still active | |
-| +1 greys out at the top (edge) | set guess to 100 | +1 and +10 greyed | |
-| −10 greys out | set guess to 5 | −10 greyed, −1 still active | |
-| −1 greys out at the bottom (edge) | set guess to 1 | −1 and −10 greyed | |
-| Hint, even | new game, click Hint | "Hint: my number is even. That cost you 1 guess." · bulb, purple · Guesses left: 6 · Hint greyed | |
-| Hint, odd | secret fixed at **41**, click Hint | "Hint: my number is odd. …" | |
-| Hint allowed with two left (edge) | new game, 5 wrong guesses | Hint still active | |
-| Hint refused with one left (other side) | 6th wrong guess | Hint greyed | |
-| Hint then run out | new game, Hint, then 6 wrong guesses | "Out of guesses!" on the 6th wrong guess (7 used in total) | |
-| Hint comes back | Play Again | Hint active again | |
+| Hot, high side | guess 45 | "45 is too high. Go lower. Hot!" — flame symbol, orange card | Exactly that: too high, Hot!, flame, orange card |
+| Hot, exactly 5 away (edge) | guess 47 | "Hot!" — distance 5 still counts as hot | Hot! — 5 away counts as hot |
+| Warm begins (other side of the edge) | guess 48 | "Warm." — distance 6, sun symbol, yellow card | Warm., sun, yellow card |
+| Warm, exactly 15 away (edge) | guess 57 | "Warm." — distance 15 is the last warm value | Warm. at 15 away |
+| Cold begins (other side of the edge) | guess 58 | "Cold." — distance 16, snowflake symbol, cyan card | Cold., snowflake, cyan card |
+| Hot, low side | guess 40 | "40 is too low. Go higher. Hot!" — flame symbol | too low, Go higher, Hot!, flame |
+| First win | new game, win in 3 guesses | "Yes, friend! 42 is my number." with no "New record!" · Best: 3 guesses | Win message, no "New record!", Best: 3 guesses |
+| Slower win keeps record | then win in 5 guesses | no "New record!" · Best still 3 guesses | No "New record!", Best stayed at 3 guesses |
+| Faster win beats record | then win in 2 guesses | message ends "New record!" · Best: 2 guesses | "New record!" shown, Best: 2 guesses |
+| Counter still grey | 4 wrong guesses | "Guesses left: 3" in grey | Guesses left: 3, grey |
+| Counter turns red (edge) | 5th wrong guess | "Guesses left: 2" in red | Guesses left: 2, red |
+| Out of guesses | 7 wrong guesses | "Out of guesses! My number was 42." · Play Again appears · guess buttons greyed | Out of guesses! My number was 42. Play Again shown, ± buttons greyed |
+| +10 greys out | set guess to 95 | +10 greyed, +1 still active | +10 greyed, +1 live |
+| +1 greys out at the top (edge) | set guess to 100 | +1 and +10 greyed | +1 and +10 greyed |
+| −10 greys out | set guess to 5 | −10 greyed, −1 still active | −10 greyed, −1 live |
+| −1 greys out at the bottom (edge) | set guess to 1 | −1 and −10 greyed | −1 and −10 greyed |
+| Hint, even | new game, click Hint | "Hint: my number is even. That cost you 1 guess." · bulb, purple · Guesses left: 6 · Hint greyed | Hint: my number is even. That cost you 1 guess. Bulb, purple, Guesses left: 6, Hint greyed |
+| Hint, odd | secret fixed at **41**, click Hint | "Hint: my number is odd. …" | Hint: my number is odd. |
+| Hint allowed with two left (edge) | new game, 5 wrong guesses | Hint still active | Hint live with 2 left |
+| Hint refused with one left (other side) | 6th wrong guess | Hint greyed | Hint greyed with 1 left |
+| Hint then run out | new game, Hint, then 6 wrong guesses | "Out of guesses!" on the 6th wrong guess (7 used in total) | Out of guesses! on the 6th guess after the hint |
+| Hint comes back | Play Again | Hint active again | Hint live again after Play Again |
 
 ## Credits
 
