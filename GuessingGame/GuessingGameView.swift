@@ -10,6 +10,7 @@
 //  It counts the guesses you have left, turns that counter red when two or fewer
 //  remain, and ends the game after seven misses. The guess buttons grey out
 //  when they would push the guess outside 1 to 100.
+//  A Hint button tells you whether the number is even or odd, for the price of one guess.
 //  When you find the number, you can play again. The fewest guesses you have
 //  ever needed is kept as your best score, and the game says so when you beat it.
 //
@@ -34,6 +35,9 @@ let warmDistance: Int = 15
 
 // When this many guesses or fewer are left, the counter turns red.
 let lowGuessesWarning: Int = 2
+
+// What the even-or-odd hint costs, in guesses.
+let hintCost: Int = 1
 
 // The game itself: what it remembers, what it shows on the screen,
 // and what it does when you click a button.
@@ -68,6 +72,10 @@ struct GuessingGameView: View {
     // The fewest guesses the player has ever needed to win. 0 means no win yet.
     // Like gamesWon, a new game does not reset this.
     @State var bestScore: Int = 0
+
+    // Becomes true once the even-or-odd hint has been bought in this game.
+    // A new game sets it back to false, because the hint was about the old number.
+    @State var hintUsed: Bool = false
 
     // MARK: - Computed properties
 
@@ -147,10 +155,19 @@ struct GuessingGameView: View {
                 .buttonStyle(.borderedProminent)
                 .tint(Color.green)
             } else {
-                Button("Guess", systemImage: "hand.point.up.left.fill") {
-                    checkGuess()
+                HStack(spacing: 12) {
+                    Button("Guess", systemImage: "hand.point.up.left.fill") {
+                        checkGuess()
+                    }
+                    .buttonStyle(.borderedProminent)
+
+                    // The hint greys out once bought, or when it would eat the last guess.
+                    Button("Hint", systemImage: "lightbulb.fill") {
+                        buyEvenOddHint()
+                    }
+                    .buttonStyle(.bordered)
+                    .disabled(!canBuyHint())
                 }
-                .buttonStyle(.borderedProminent)
             }
 
             // The counter turns red when the player is running low on guesses.
@@ -284,6 +301,30 @@ struct GuessingGameView: View {
         }
     }
 
+    // The hint can be bought once per game, and only if paying for it
+    // would still leave the player at least one real guess.
+    func canBuyHint() -> Bool {
+        return !hintUsed && guessesLeft() > hintCost
+    }
+
+    // Hands back "even" or "odd". A number is even when dividing it by 2 leaves no remainder.
+    func evenOrOdd(_ number: Int) -> String {
+        if number % 2 == 0 {
+            return "even"
+        } else {
+            return "odd"
+        }
+    }
+
+    // Charges the player a guess, then tells them whether the secret number is even or odd.
+    func buyEvenOddHint() {
+        guessCount += hintCost
+        hintUsed = true
+        message = "Hint: my number is \(evenOrOdd(secretNumber)). That cost you \(hintCost) guess."
+        messageSymbol = "lightbulb.fill"
+        messageColor = Color.purple
+    }
+
     // Hands back the best score as text, or a dash when there is no win yet.
     func bestScoreText() -> String {
         if bestScore == 0 {
@@ -315,6 +356,7 @@ struct GuessingGameView: View {
         messageSymbol = "questionmark.circle.fill"
         messageColor = Color.indigo
         gameIsOver = false
+        hintUsed = false
     }
 }
 
